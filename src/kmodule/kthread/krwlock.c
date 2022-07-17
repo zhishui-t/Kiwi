@@ -7,6 +7,10 @@
 
 #include "krwlock.h"
 
+struct KiwiRwlock {
+    pthread_rwlock_t locker;
+};
+
 bool KiwiRwlockInit(KiwiRwlock *rwlock)
 {
     if (rwlock == NULL) {

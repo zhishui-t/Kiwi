@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(zrpc)
+project(kiwi)
 
-set (CFLAGE "${CFLAGE} -std=c11")
-
+set (KIWI_COMMON_C_FLAGE "-std=c11")
 set(CMAKE_C_COMPILER "gcc")
-set(CMAKE_C_FLAGS_DEBUG "${CFLAGE} -g")
-set(CMAKE_C_FLAGS_RELEASE "-O3 -Wall ${CFLAGE}")
+# set(CMAKE_C_FLAGS "-std=c11")
+set(CMAKE_C_FLAGS_DEBUG "${KIWI_COMMON_C_FLAGE} -g")
+set(CMAKE_C_FLAGS_RELEASE "-O3 -Wall ${KIWI_COMMON_C_FLAGE}")
+
+set(CMAKE_BUILD_TYPE DEBUG)
 
 set(KIWI_ROOT_PATH ${PROJECT_SOURCE_DIR}/..)
 

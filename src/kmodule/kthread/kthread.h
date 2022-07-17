@@ -13,12 +13,7 @@
 
 typedef void (*KiwiPfThreadFunc)(uintptr_t cdata);
 
-typedef struct {
-    KiwiPfThreadFunc func;
-    uintptr_t cdata;
-} KiwiThread;
-
-bool KiwiThreadStart(KiwiThread *thread);
+bool KiwiThreadStart(KiwiPfThreadFunc func, const uintptr_t cdata);
 void KiwiThreadSleep(const uint32_t millSec);
 
 #endif // KIWI_MODULE_THREAD_H

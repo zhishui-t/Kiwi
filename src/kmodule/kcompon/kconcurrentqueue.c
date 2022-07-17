@@ -6,6 +6,7 @@
  */
 #include "kconcurrentqueue.h"
 #include "kmemory.h"
+#include "klog.h"
 
 typedef struct {
     uintptr_t data;
@@ -76,20 +77,33 @@ bool KiwiConcurrQueuePush(KiwiConcurrQueue *queue, const uintptr_t data)
             KiwiConcurrQueueNodeFree(node);
             return false;
         }
-    } while (!KIWI_ATOMIC_CAS(tail->next, NULL, node));
-    KIWI_ATOMIC_CAS(queue->tail, tail, tail->next);
+    } while (!KIWI_ATOMIC_POINTER_CAS(tail->next, NULL, node));
+    KIWI_ATOMIC_POINTER_CAS(queue->tail, tail, tail->next);
     KIWI_ATOMIC_INC(queue->count);
     return true;
 }
 
 bool KiwiConcurrQueuePop(KiwiConcurrQueue *queue, uintptr_t *data)
 {
-    if (KiwiConcurrQueueSize(queue) == 0) {
-        return false;
-    }
     if (data == NULL) {
         return false;
     }
+    KiwiConcurrQueueNode *head = NULL;
+    KiwiConcurrQueueNode *headNext = NULL;
+    do {
+        head = (KiwiConcurrQueueNode *)KIWI_ATOMIC_LOAD(queue->head);
+        if (head == NULL) {
+            KiwiLog("[KiwiConcurrQueuePop] head is null\n");
+            return false;
+        }
+        headNext = (KiwiConcurrQueueNode *)KIWI_ATOMIC_LOAD(head->next);
+        if (headNext == NULL) {
+            return false;
+        }
+    } while (KIWI_ATOMIC_POINTER_CAS(queue->head, headNext, headNext));
+    *data = headNext->data;
+    headNext->data = 0;
+    KiwiConcurrQueueNodeFree(head);
     KIWI_ATOMIC_DEC(queue->count);
     return true;
 }

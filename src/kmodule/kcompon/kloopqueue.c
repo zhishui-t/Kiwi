@@ -20,12 +20,13 @@ KiwiLoopQueue *KiwiLoopQueueCreate(const size_t capacity)
     }
     memset(loopQueue, 0, sizeof(KiwiLoopQueue));
     loopQueue->capacity = capacity + 1;
-    loopQueue->datas = (uintptr_t *)KIWI_ALLOC(sizeof(uintptr_t) * loopQueue->capacity);
+    const uint32_t size = sizeof(uintptr_t) * loopQueue->capacity;
+    loopQueue->datas = (uintptr_t *)KIWI_ALLOC(size);
     if (loopQueue->datas == NULL) {
         KIWI_SAFE_FREE(loopQueue);
         return NULL;
     }
-    memset(loopQueue->datas, 0, sizeof(uintptr_t) * loopQueue->capacity);
+    memset(loopQueue->datas, 0, size);
     return loopQueue;
 }
 

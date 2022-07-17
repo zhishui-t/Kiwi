@@ -8,33 +8,36 @@
 #include <unistd.h>
 #include "kmemory.h"
 
+typedef struct {
+    KiwiPfThreadFunc func;
+    uintptr_t cdata;
+} KiwiThread;
+
 static void *KiwiThreadOnRun(void *args)
 {
-	KiwiThread *thread = (KiwiThread *)args;
+    KiwiThread *thread = (KiwiThread *)args;
     if (thread == NULL) {
         return NULL;
     }
-	thread->func(thread->cdata);
+    thread->func(thread->cdata);
     KIWI_SAFE_FREE(thread);
-	return NULL;
+    return NULL;
 }
 
-bool KiwiThreadStart(KiwiThread *thread)
+bool KiwiThreadStart(KiwiPfThreadFunc func, const uintptr_t cdata)
 {
+    if (func == NULL) {
+        return false;
+    }
+    KiwiThread *thread = (KiwiThread *)KIWI_ALLOC(sizeof(KiwiThread));
     if (thread == NULL) {
         return false;
     }
-    if (thread->func == NULL) {
-        return false;
-    }
-    KiwiThread *threadInfo = (KiwiThread *)KIWI_ALLOC(sizeof(KiwiThread));
-    if (threadInfo == NULL) {
-        return false;
-    }
-    *threadInfo = *thread;
+    thread->cdata = cdata;
+    thread->func = func;
     pthread_t pid;
-    if (pthread_create(&pid, NULL, KiwiThreadOnRun, (void *)(threadInfo)) == 0) {
-        KIWI_SAFE_FREE(threadInfo);
+    if (pthread_create(&pid, NULL, KiwiThreadOnRun, (void *)(thread)) == 0) {
+        KIWI_SAFE_FREE(thread);
         return false;
     }
     pthread_detach(pid);

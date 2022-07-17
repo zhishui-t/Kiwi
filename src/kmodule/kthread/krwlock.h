@@ -11,9 +11,7 @@
 #include <pthread.h>
 #include "ktypes.h"
 
-typedef struct {
-    pthread_rwlock_t locker;
-} KiwiRwlock;
+typedef struct KiwiRwlock KiwiRwlock;
 
 bool KiwiRwlockInit(KiwiRwlock *rwlock);
 void KiwiRwlockDeinit(KiwiRwlock *rwlock);

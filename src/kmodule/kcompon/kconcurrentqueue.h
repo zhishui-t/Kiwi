@@ -12,11 +12,10 @@
 #include "katomic.h"
 
 typedef struct {
-    KIWI_ATOMIC uintptr_t head;
-    KIWI_ATOMIC uintptr_t tail;
+    KIWI_ATOMIC_POINTER head;
+    KIWI_ATOMIC_POINTER tail;
     KIWI_ATOMIC size_t count;
 } KiwiConcurrQueue;
-
 
 KiwiConcurrQueue *KiwiConcurrQueueCreate(void);
 void KiwiConcurrQueueDestroy(KiwiConcurrQueue *queue);

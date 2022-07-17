@@ -1,5 +1,5 @@
 #!/bin/bash
 build_root=$PWD
 
-cmake ${build_root}/../cmake
+cmake -DCMAKE_BUILD_TYPE=Debug ${build_root}/../cmake
 make -j8

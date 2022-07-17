@@ -82,7 +82,7 @@ bool KiwiReAlloc(void **buf, const size_t size, const char *funcName, const size
     if (newBuf == NULL) {
         return false;
     }
-    (void)memset_s(newBuf, size, 0, size);
+    memset(newBuf, 0, size);
     memcpy(newBuf, *buf, oriSize);
     KiwiFree(*buf, funcName, lineNo);
     *buf = newBuf;
@@ -99,7 +99,7 @@ char *KiwiStrDup(const char *src, const char *funcName, const size_t lineNo)
     if (dest == NULL) {
         return NULL;
     }
-    (void)memset_s(dest, srcLen + 1, 0, srcLen + 1);
+    memset(dest, 0, srcLen + 1);
     if (srcLen == 0) {
         return dest; 
     }

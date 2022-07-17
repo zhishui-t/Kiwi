@@ -7,12 +7,16 @@
 
 #include "kspinlock.h"
 
+struct KiwiSpinlock {
+    KIWI_ATOMIC bool lock;
+};
+
 void KiwiSpinlockInit(KiwiSpinlock *spinlock)
 {
     if (spinlock == NULL) {
         return;
     }
-    KIWI_ATOMIC_INIT(spinlock->lock, 0);
+    KIWI_ATOMIC_INIT(spinlock->lock, false);
 }
 
 void KiwiSpinlockDeinit(KiwiSpinlock *spinlock)
@@ -28,7 +32,8 @@ bool KiwiSpinlockTryLock(KiwiSpinlock *spinlock)
     if (spinlock == NULL) {
         return false;
     }
-    return KIWI_ATOMIC_CAS(spinlock->lock, 0, 1);
+    bool srcStatus = false;
+    return KIWI_ATOMIC_CAS(spinlock->lock, srcStatus, true);
 }
 
 void KiwiSpinlockLock(KiwiSpinlock *spinlock)
@@ -36,7 +41,8 @@ void KiwiSpinlockLock(KiwiSpinlock *spinlock)
     if (spinlock == NULL) {
         return;
     }
-    while (!KIWI_ATOMIC_CAS(spinlock->lock, 0, 1)) {}
+    bool srcStatus = false;
+    while (!KIWI_ATOMIC_CAS(spinlock->lock, srcStatus, true)) {}
 }
 
 void KiwiSpinlockUnlock(KiwiSpinlock *spinlock)
@@ -44,5 +50,6 @@ void KiwiSpinlockUnlock(KiwiSpinlock *spinlock)
     if (spinlock == NULL) {
         return;
     }
-    KIWI_ATOMIC_CAS(spinlock->lock, 1, 0);
+    bool srcStatus = true;
+    KIWI_ATOMIC_CAS(spinlock->lock, srcStatus, false);
 }

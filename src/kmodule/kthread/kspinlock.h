@@ -11,9 +11,7 @@
 #include "katomic.h"
 #include "ktypes.h"
 
-typedef struct {
-    KIWI_ATOMIC uint32_t lock;
-} KiwiSpinlock;
+typedef struct KiwiSpinlock KiwiSpinlock;
 
 void KiwiSpinlockInit(KiwiSpinlock *spinlock);
 void KiwiSpinlockDeinit(KiwiSpinlock *spinlock);
